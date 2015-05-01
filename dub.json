@@ -1,0 +1,11 @@
+{
+	"name": "rebel",
+	"description": "My all serius 3D engine",
+	"copyright": "Copyright © 2015, Dan 'Wild' Printzell",
+	"authors": ["Wild"],
+	"dependencies": {
+		"derelict-sdl2": ">=1.9.1",
+		"derelict-gl3": ">=1.0.12",
+		"gl3n": ">=1.0.0"
+	}
+}
