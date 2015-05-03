@@ -1,8 +1,9 @@
-#version 330
+#version 330 core
 
 out vec4 vFragColor;
 
-void main(void)
-{
-   vFragColor = vec4(1,1,1,1);
+uniform vec4 color;
+
+void main() {
+	vFragColor = color;//vec4(1,1,1,1);
 }

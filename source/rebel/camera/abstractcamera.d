@@ -12,6 +12,9 @@ public:
 		far = 1000;
 		P = mat4(1);
 		V = mat4(1);
+
+		for (int i = 0; i < planes.length; i++)
+			planes[i] = new Plane();
 	}
 
 	~this() {
@@ -24,15 +27,16 @@ public:
 		this.fov = fov;
 		this.width = width;
 		this.height = height;
-		this.P = mat4.perspective(width, height, fov, near, far);
+		//this.P = mat4.perspective(width, height, fov, near, far);
+		this.P = perspective(fov, AspectRatio, near, far); //TODO: remove
 	}
 
 	abstract void Update() {
 	}
-	abstract void Rotate(float yaw, float pitch, float roll) {
+	void Rotate(float yaw, float pitch, float roll) {
 		this.yaw = radians(yaw);
 		this.pitch = radians(pitch);
-		this.roll = radians(roll);
+		this.roll = radians(roll); 
 		Update();
 	}
 
@@ -44,8 +48,8 @@ public:
 	@property float FOV() { return fov; }
 	@property float FOV(float fov) {
 		this.fov = fov;
-		//this.P = perspective(fov, AspectRatio, near, far); TODO: remove
-		this.P = mat4.perspective(width, height, fov, near, far);
+		this.P = perspective(fov, AspectRatio, near, far); //TODO: remove
+		//this.P = mat4.perspective(width, height, fov, near, far);
 		return fov;
 	}
 	@property float Width() { return width; }
@@ -87,7 +91,7 @@ public:
 	}
 
 	bool IsPointInFrustum(vec3 point) {
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < planes.length; i++) {
 			if (planes[i].GetDistance(point) < 0)
 				return false;
 		}
@@ -95,7 +99,7 @@ public:
 	}
 
 	bool IsSphereInFrustum(vec3 center, float radius) {
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < planes.length; i++) {
 			float d = planes[i].GetDistance(center);
 			if (d < -radius)
 				return false;
@@ -104,7 +108,7 @@ public:
 	}
 
 	bool IsBoxInFrustum(vec3 min, vec3 max) {
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < planes.length; i++) {
 			vec3 p = min, n = max;
 			vec3 N = planes[i].N;
 			if (N.x >= 0) {
@@ -126,8 +130,9 @@ public:
 		return true;
 	}
 
-	void GetFrustumPlanes(vec4 fp[6]) {
-		for (int i = 0; i < 6; i++)
+	void GetFrustumPlanes(ref vec4 fp[6]) {
+		assert(fp.length == planes.length);
+		for (int i = 0; i < fp.length; i++)
 			fp[i] = vec4(planes[i].N, planes[i].D);
 	}
 

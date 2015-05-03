@@ -9,8 +9,7 @@ smooth in vec2 vUV;				//interpolated 2D texture coordinates
 uniform sampler2D textureMap;	//texture map
 
 
-void main()
-{
+void main() {
 	//use the interpolated textrue coordinate to lookup the colour from the given texture map
 	vFragColor = texture(textureMap, vUV).rrrr;
 }

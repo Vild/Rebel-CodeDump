@@ -7,14 +7,13 @@ class FreeCamera : AbstractCamera {
 public:
 	this() {
 		translation = vec3(0);
+		speed = 0.5;
 	}
 
 	override void Update() {
-		super.Update;
-
-		mat4 R = GetMatrixUsingYawPitchRoll(yaw, pitch, roll);
+		mat4 R = yawPitchRoll(yaw, pitch, roll);
 		position += translation;
-		translation = vec3(0);
+		//translation = vec3(0);
 
 		look = vec3(R*vec4(0, 0, 1, 0));
 		vec3 tgt = position+look;
@@ -23,25 +22,28 @@ public:
 		V = mat4.look_at(position, tgt, up);
 	}
 
-	override void Rotate(float yaw, float pitch, float roll) {
-		this.yaw = yaw;
-		this.pitch = pitch;
-		this.roll = roll;
-	}
-
 	void Walk(float dt) {
-		translation += (look * dt);
+		translation += (look * speed * dt);
+		Update();
 	}
 
 	void Strafe(float dt) {
-		translation += (right * dt);
+		translation += (right * speed * dt);
+		Update();
 	}
 
 	void Lift(float dt) {
-		translation += (up * dt);
+		translation += (up * speed * dt);
+		Update();
 	}
 
-	@property ref vec3 Translation() {
+	@property ref vec3 Translation(vec3 translation) { //TODO: maybe add Update(); somehow
+		this.translation = translation;
+		Update();
+		return this.translation;
+	}
+
+	@property ref vec3 Translation() { //TODO: maybe add Update(); somehow
 		return translation;
 	}
 

@@ -22,7 +22,7 @@ public:
 	}
 
 	static Plane FromPoints(vec3 v1, vec3 v2, vec3 v3) { //TODO: make constructor
-		Plane temp;
+		Plane temp = new Plane();
 		vec3 e1 = v2-v1;
 		vec3 e2 = v3-v1;
 		temp.N = cross(e1, e2).normalized();

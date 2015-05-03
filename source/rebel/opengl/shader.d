@@ -78,23 +78,21 @@ public:
 
 	void AddAttribute(string attribute) {
 		attributeList[attribute] = glGetAttribLocation(program, toStringz(attribute));
-		//writeln(ID, " add[", attribute, "] = ", attributeList[attribute]);
+		writeln(ID, " add[", attribute, "] = ", attributeList[attribute]);
 	}
 
 	void AddUniform(string uniform) {
 		uniformLocationList[uniform] = glGetUniformLocation(program, toStringz(uniform));
-		//writeln(ID, " add(", uniform, ") = ", uniformLocationList[uniform]);
+		writeln(ID, " add(", uniform, ") = ", uniformLocationList[uniform]);
 	}
 
 	GLuint * opIndex(string attribute) {
 		auto ret = (attribute in attributeList);
-		//writeln(ID, " [", attribute, "] = ", ret);
 		return ret;
 	}
 
 	GLuint * opCall(string uniform) {
 		auto ret = (uniform in uniformLocationList);
-		//writeln(ID, " (", uniform, ") = ", ret);
 		return ret;
 	}
 
