@@ -1,11 +1,60 @@
 {
 	"name": "rebel",
+    "targetType": "none",
 	"description": "My all serius 3D engine",
 	"copyright": "Copyright © 2015, Dan 'Wild' Printzell",
 	"authors": ["Wild"],
 	"dependencies": {
-		"derelict-sdl2": ">=1.9.1",
-		"derelict-gl3": ">=1.0.12",
-		"gl3n": ">=1.0.0"
-	}
+		"rebel:testgame" : "*"
+	},
+	"subPackages": [
+		{
+			"name" : "swift",
+		    "targetType" : "library",
+		    "dependencies" : {
+				"gl3n": ">=1.1.0",
+				
+				"artemisd": {
+				    "path": "../artemisd-fixed",
+				    "version": "~master"
+				},
+				"deslog": "~>0.2.0"
+			},
+		    "sourcePaths" : ["swift/source"],
+		    "importPaths" : ["swift/source"]
+		},
+		{
+		    "name" : "rebel",
+		    "targetType" : "library",
+		    "dependencies" : {
+				"rebel:swift" : "~master",
+
+				"derelict-sdl2": ">=1.9.5",
+				"derelict-gl3": ">=1.0.13"
+		    },
+		    "sourcePaths" : ["rebel/source"],
+		    "importPaths" : ["rebel/source"]
+		},    
+		{
+		    "name" : "testgame",
+		    "targetType" : "executable",
+		    "dependencies" : {
+				"rebel:swift" : "~master",
+				"rebel:rebel" : "~master"
+		    },
+		    "sourcePaths" : ["testgame/source"],
+		    "importPaths" : ["testgame/source"]
+		},    
+		{
+		    "name" : "town",
+		    "targetType" : "executable",
+		    "dependencies" : {
+				"rebel:swift" : "~master",
+				"rebel:rebel" : "~master"
+		    },
+		    "sourcePaths" : ["town/source"],
+		    "importPaths" : ["town/source"]
+		}
+	]
 }
+	

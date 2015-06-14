@@ -3,3 +3,5 @@ dub.selections.json
 dub.userprefs
 rebel
 *.trace
+*.a
+rebel_*
