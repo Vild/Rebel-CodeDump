@@ -155,13 +155,7 @@ public:
 
 		glBeginQuery(GL_PRIMITIVES_GENERATED, query);
 
-		auto tmp = cam.Position;
-		cam.Position = vec3(0);
-		cam.Update;
-
-		skybox.Render(cam.ProjectionMatrix() * cam.ViewMatrix());
-		cam.Position = tmp;
-
+		skybox.Render(cam.ProjectionMatrix * cam.SkyboxMatrix );
 
 		foreach (cubes; town)
 			foreach (cube; cubes)
