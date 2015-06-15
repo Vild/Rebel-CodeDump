@@ -1,43 +1,37 @@
 module testgame.app;
 
+import building;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
-
 import gl3n.linalg;
 import gl3n.math;
-
-import swift.engine : Engine;
-import swift.data.deltaprovider;
-import swift.event.deltaevent;
-import swift.enginestate;
-import swift.event.event;
-import swift.data.convar;
-import swift.data.vector;
-
-import rebel.graphicstate;
+import rebel.camera.freecamera;
 import rebel.data.sdleventprovider;
+import rebel.entity.colorcube;
+import rebel.entity.texturedplane;
 import rebel.event.keyboard.keydownevent;
 import rebel.event.mouse.mousebuttondownevent;
 import rebel.event.mouse.mousemoveevent;
-
-import rebel.camera.freecamera;
-import rebel.entity.texturedplane;
+import rebel.event.window.resizeevent;
+import rebel.graphicstate;
+import rebel.opengl.cubemaptexture;
 import rebel.opengl.mesh;
 import rebel.opengl.shader;
 import rebel.opengl.texture;
-import rebel.entity.colorcube;
-
+import rebel.rebelengine;
+import skybox;
 import std.algorithm : max,min;
 import std.conv;
-import std.stdio;
-
-
-import std.random;
 import std.datetime : clock;
-
-import rebel.event.window.resizeevent;
-import rebel.rebelengine;
-import building;
+import std.random;
+import std.stdio;
+import swift.data.convar;
+import swift.data.deltaprovider;
+import swift.data.vector;
+import swift.engine : Engine;
+import swift.enginestate;
+import swift.event.deltaevent;
+import swift.event.event;
 
 RebelEngine engine;
 
@@ -70,7 +64,7 @@ public:
 		
 		cam = new FreeCamera();
 		cam.Speed = MOVE_SPEED;
-		cam.Position = vec3(2, 2, 2);
+		cam.Position = vec3(0, 0, 2);
 		cam.Rotate(rX, rY, 0);
 		
 		cam.SetupProjection(fov, engine.GetWindow.WindowSize.x, engine.GetWindow.WindowSize.y);
@@ -78,15 +72,8 @@ public:
 		
 		cam.CalcFrustumPlanes();
 
-		vec3 look = (cam.Position).normalized();
-		
-		float yaw = degrees(atan2(look.z, look.x) + PI);
-		float pitch = degrees(asin(look.y));
-		
-		rX = yaw;
-		rY = pitch;
-		
-		cam.Rotate(rX, rY, 0);
+		skybox = new Skybox(new CubeMapTexture("res/arrakis/arrakis_%s.png"));
+		//skybox = new Skybox(new CubeMapTexture("res/tron/tron_%s.jpg"));
 
 		uint seed = cast(uint)(unpredictableSeed + clock());
 		gen = Random(seed);
@@ -95,7 +82,6 @@ public:
 				town ~= GenerateHouse(vec3((x-5)*3, 0, (z-5)*3));
 
 		lastTime = SDL_GetTicks();
-
 	}
 
 	~this() {
@@ -121,6 +107,9 @@ public:
 					} else {
 						rY += (pos.y - mousePos.y)/5.;
 						rX += (mousePos.x - pos.x)/5.;
+
+						rX = rX % 360;
+						rY = max(min(rY, 90), -90);
 						
 						cam.Rotate(rX, rY, 0);
 					}
@@ -160,11 +149,20 @@ public:
 		mat4 MV = cam.ViewMatrix();
 		mat4 P = cam.ProjectionMatrix();
 		mat4 MVP = P * MV;
-		
+
 		vec4[6] p;
 		cam.GetFrustumPlanes(p);
-		
+
 		glBeginQuery(GL_PRIMITIVES_GENERATED, query);
+
+		auto tmp = cam.Position;
+		cam.Position = vec3(0);
+		cam.Update;
+
+		skybox.Render(cam.ProjectionMatrix() * cam.ViewMatrix());
+		cam.Position = tmp;
+
+
 		foreach (cubes; town)
 			foreach (cube; cubes)
 				cube.Render(MVP);
@@ -182,7 +180,7 @@ private:
 	immutable EPSILON = 0.001f;
 	immutable EPSILON2 = EPSILON*EPSILON;
 	int oldX = 0, oldY = 0;
-	float rX = -135, rY = 45, fov = 45;
+	float rX = 0, rY = 0, fov = 45;
 	const double MOVE_SPEED = 10;
 	vec2i mousePos;
 
@@ -194,7 +192,9 @@ private:
 	double last;
 	double lastFPS;
 	uint lastTime;
-	
+
+	Skybox skybox;
+
 	Building[][] town;
 	int select = -1;
 
@@ -202,24 +202,12 @@ private:
 
 	Building[] GenerateHouse(vec3 offset) {
 		Texture tex = new Texture("res/skyscaper.jpg");
-		Building[] cubes;
 		int amount = uniform(2, 5, gen);
+		Building[] cubes;
+		cubes.reserve(amount);
 		double mw = 1;
 		double mh = 4;
-		double md = 1;
-		{
-			Building cube = new Building(
-				vec3(0.1, mh+2, .1), tex
-				);
-			cube.Position.Position = vec3(
-				offset.x,
-				cube.Size.y / 2-1 + offset.y,
-				offset.z
-				);
-			//cubes ~= cube;
-		}
-		
-		
+		double md = 1;		
 		for (int i = 0; i < amount; i++) {
 			double w = (i+1)*uniform(0, mw, gen);
 			w = min(max(w, mw*0.5), mw);
@@ -227,11 +215,7 @@ private:
 			double d = (i+1)*uniform(0, md, gen);
 			d = min(max(d, md*0.5), mw);
 			
-			Building cube = new Building(
-				//vec4(uniform(0., 1., gen), uniform(0., 1., gen), uniform(0., 1., gen), 1),
-				//vec4(uniform(0, 0.2, gen)*(i+1), uniform(0, 0.2, gen)*(i+1), uniform(0, 0.2, gen)*(i+1), 1),
-				vec3(w, h, d), tex
-				);
+			Building cube = new Building(vec3(w, h, d), tex);
 			
 			double xoff = uniform(-(w-0.1*i)/2., (w-0.1*i)/2., gen);
 			double zoff = uniform(-(d-0.1*i)/2., (d-0.1*i)/2., gen);

@@ -11,48 +11,70 @@ class Building : Mesh {
 		this.size = size;
 		this.texture = texture;
 
-		double r = 0.2;
-		double d = 0.05;
+		double r = 0.4;
+		double d = 0;
 
 		Vertex[] vertices = [
-			Vertex(vec3(-0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec2(0.0*size.x, 0.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec2(1.0*size.x, 0.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec2(1.0*size.x, 1.0*size.y)),
-			Vertex(vec3(-0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec2(0.0*size.x, 1.0*size.y)),
-			
-			Vertex(vec3(-0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec2(0.0*size.x, 0.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec2(1.0*size.x, 0.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec2(1.0*size.x, 1.0*size.y)),
-			Vertex(vec3(-0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec2(0.0*size.x, 1.0*size.y)),
-			
-			Vertex(vec3( 0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec2(0.0*size.x, 0.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec2(1.0*size.x, 0.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec2(1.0*size.x, 1.0*size.y)),
-			Vertex(vec3( 0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec2(0.0*size.x, 1.0*size.y)),
-			
-			Vertex(vec3(-0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec2(0.0*size.x, 0.0*size.y)),
-			Vertex(vec3(-0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec2(1.0*size.x, 0.0*size.y)),
-			Vertex(vec3(-0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec2(1.0*size.x, 1.0*size.y)),
-			Vertex(vec3(-0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec2(0.0*size.x, 1.0*size.y))
+			//+x
+			Vertex(vec3( 0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 1.0*size.y, 0.0)),
+
+			//-x
+			Vertex(vec3(-0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 1.0*size.y, 0.0)),
+
+			//+y
+			Vertex(vec3(-0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec3(0.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec3(1.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec3(1.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec3(0.0*size.x, 0.0*size.y, 0.0)),
+
+			//-y
+			Vertex(vec3(-0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec3(0.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(d), vec3(1.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec3(1.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(d), vec3(0.0*size.x, 0.0*size.y, 0.0)),
+
+			//+z
+			Vertex(vec3(-0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 0.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 1.0*size.y,  0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 1.0*size.y, 0.0)),
+
+			//-z
+			Vertex(vec3(-0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 1.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 0.0*size.y, 0.0)),
+			Vertex(vec3( 0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(1.0*size.x, 1.0*size.y, 0.0)),
+			Vertex(vec3(-0.5*size.x, 0.0*size.y, -0.5*size.z), vec3(0), vec4(r), vec3(0.0*size.x, 1.0*size.y, 0.0))
 		];
 		GLuint[] indices = [
+			//+x
 			0, 1, 2,
 			2, 3, 0,
-			
+
+			//-x
 			4, 5, 6,
 			6, 7, 4,
-			
-			3, 2, 5, 
-			5, 4, 3,
-			
-			7, 6, 1,
-			1, 0, 7,
-			
+
+			//+y
 			8, 9, 10,
 			10, 11, 8,
-			
+
+			//-y
 			12, 13, 14,
-			14, 15, 12
+			14, 15, 12,
+
+			//+z
+			16, 17, 18, 
+			18, 19, 16,
+
+			//-z
+			20, 21, 22,
+			22, 23, 20
 		];
 		
 		super(vertices, indices, GL_TRIANGLES);
@@ -89,6 +111,7 @@ class Building : Mesh {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture.Get);
 		super.Render(MVP);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	@property vec3 Size() { return size; }
