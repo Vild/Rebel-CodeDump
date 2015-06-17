@@ -5,11 +5,14 @@ import rebel.opengl.mesh;
 import derelict.opengl3.gl3;
 import rebel.opengl.texture;
 import gl3n.linalg;
+import rebel.ray.raybox;
 
 class Building : Mesh {
-	this(vec3 size, Texture texture) {
+	this(int id, vec3 size, Texture texture) {
+		this.id = id;
 		this.size = size;
 		this.texture = texture;
+		this.hit = false;
 
 		double r = 0.4;
 		double d = 0;
@@ -87,6 +90,7 @@ class Building : Mesh {
 		shader.AddAttribute("vColor");
 		shader.AddAttribute("vTexCoord");
 		shader.AddUniform("MVP");
+		shader.AddUniform("hit");
 		shader.AddUniform("tex");
 		glUniform1i(*shader("tex"), 0);
 		shader.UnUse();
@@ -105,6 +109,8 @@ class Building : Mesh {
 		super.SetCustomUniforms;
 		if (auto textureMap = shader("tex"))
 			glUniform1i(*textureMap, 0);
+		if (auto hit = shader("hit"))
+			glUniform1i(*hit, !this.hit ? 1:0);
 	}
 
 	override public void Render(mat4 MVP = mat4.identity) {
@@ -116,8 +122,17 @@ class Building : Mesh {
 
 	@property vec3 Size() { return size; }
 
+	@property RayBox Hitbox() {
+		vec3 p = Position.Position;
+		return new RayBox(id, vec3(p.x - size.x/2, p.y, p.z - size.z/2), vec3(p.x + size.x/2, p.y + size.y, p.z + size.z/2));
+	}
+
+	@property ref bool Hit() { return hit; }
+
 private:
+	int id;
 	vec3 size;
 	Texture texture;
+	bool hit;
 }
 

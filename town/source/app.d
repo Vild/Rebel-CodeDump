@@ -32,6 +32,8 @@ import swift.engine : Engine;
 import swift.enginestate;
 import swift.event.deltaevent;
 import swift.event.event;
+import rebel.ray.raybox;
+import rebel.ray.ray;
 
 RebelEngine engine;
 
@@ -64,13 +66,15 @@ public:
 		
 		cam = new FreeCamera();
 		cam.Speed = MOVE_SPEED;
-		cam.Position = vec3(0, 0, 2);
+		cam.Position = vec3(0, 4, 2);
 		cam.Rotate(rX, rY, 0);
 		
 		cam.SetupProjection(fov, engine.GetWindow.WindowSize.x, engine.GetWindow.WindowSize.y);
 		cam.Update();
 		
 		cam.CalcFrustumPlanes();
+
+		ray = new Ray();
 
 		skybox = new Skybox(new CubeMapTexture("res/arrakis/arrakis_%s.png"));
 		//skybox = new Skybox(new CubeMapTexture("res/tron/tron_%s.jpg"));
@@ -97,7 +101,25 @@ public:
 			} else if (auto e = cast(DeltaEvent)event) {
 				delta = e.Delta;
 			} else if (auto e = cast(MouseButtonDownEvent)event) {
-				mousePos = engine.GetMouse.Position;
+				if (engine.GetMouse.Right) {
+					vec2i ws = engine.GetWindow.WindowSize;
+					ray.Setup(cam, vec2(mousePos.x, mousePos.y), vec2(ws.x, ws.y));
+					size_t hitted = ray.Trace(hitboxes);
+					engine.Logger.Info("mouse: x: %d, y: %d", mousePos.x, mousePos.y);
+					if (hitted == -1)
+						engine.Logger.Error("No hit");
+					else {
+						RayBox rb = hitboxes[hitted];
+						engine.Logger.Debug("Hit: %d", rb.ID);
+						foreach(ref a; town)
+							foreach(ref b; a)
+								b.Hit = false;
+
+						foreach(ref b; town[rb.ID])
+							b.Hit = true;
+					}
+				} else
+					mousePos = engine.GetMouse.Position;
 			} else if (auto e = cast(MouseMoveEvent)event) {
 				auto pos = e.Position;
 				if (engine.GetMouse.RawState) {
@@ -138,6 +160,16 @@ public:
 		if (_(KeyCode.KEY_SPACE))
 			cam.Lift(delta);
 
+		//cam.Walk(delta/8.);
+		//cam.Strafe(delta/8.);
+
+		//rX += delta*8.;
+	
+		rX = rX % 360;
+		rY = max(min(rY, 90), -90);
+		
+		cam.Rotate(rX, rY, 0);
+
 		vec3 t = cam.Translation();
 		
 		if(dot(t, t) > EPSILON2)
@@ -163,7 +195,6 @@ public:
 		
 		glEndQuery(GL_PRIMITIVES_GENERATED);
 		glGetQueryObjectuiv(query, GL_QUERY_RESULT, &res);
-
 
 		if (SDL_GetTicks() - lastTime >= 1000) {
 			engine.Logger.Info("Drawed verties: %d", res);
@@ -191,10 +222,13 @@ private:
 
 	Building[][] town;
 	int select = -1;
+	RayBox[] hitboxes;
+	Ray ray;
 
 	Random gen;
 
 	Building[] GenerateHouse(vec3 offset) {
+		static int id_count = 0;
 		Texture tex = new Texture("res/skyscaper.jpg");
 		int amount = uniform(2, 5, gen);
 		Building[] cubes;
@@ -209,7 +243,7 @@ private:
 			double d = (i+1)*uniform(0, md, gen);
 			d = min(max(d, md*0.5), mw);
 			
-			Building cube = new Building(vec3(w, h, d), tex);
+			Building cube = new Building(id_count, vec3(w, h, d), tex);
 			
 			double xoff = uniform(-(w-0.1*i)/2., (w-0.1*i)/2., gen);
 			double zoff = uniform(-(d-0.1*i)/2., (d-0.1*i)/2., gen);
@@ -221,7 +255,9 @@ private:
 				);
 			
 			cubes ~= cube;
+			hitboxes ~= cube.Hitbox;
 		}
+		id_count++;
 		return cubes;
 	}
 }

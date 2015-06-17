@@ -1,6 +1,7 @@
 #version 330 core
 
 uniform sampler2D tex;
+uniform int hit;
 
 in vec4 oColor;
 in vec2 oTexCoord;
@@ -8,5 +9,5 @@ in vec2 oTexCoord;
 out vec4 fFragColor;
 
 void main() {
- 	fFragColor = texture(tex, oTexCoord) * oColor;
+ 	fFragColor = texture(tex, oTexCoord) * oColor * (hit * 1.0);
 }
