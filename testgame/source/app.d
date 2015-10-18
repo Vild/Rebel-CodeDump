@@ -2,8 +2,7 @@ module testgame.app;
 
 import derelict.opengl3.gl3;
 
-import gl3n.linalg;
-import gl3n.math;
+import swift.data.vector;
 
 import swift.engine : Engine;
 import swift.data.deltaprovider;

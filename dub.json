@@ -1,6 +1,6 @@
 {
 	"name": "rebel",
-    "targetType": "none",
+	"targetType": "none",
 	"description": "My all serius 3D engine",
 	"copyright": "Copyright © 2015, Dan 'Wild' Printzell",
 	"authors": ["Wild"],
@@ -10,51 +10,55 @@
 	"subPackages": [
 		{
 			"name" : "swift",
-		    "targetType" : "library",
-		    "dependencies" : {
+			"targetName" : "swift",
+			"targetType" : "library",
+			"dependencies" : {
 				"gl3n": ">=1.1.0",
-				
+
 				"artemisd": {
-				    "path": "../artemisd-fixed",
-				    "version": "~master"
+					"path": "../artemisd-fixed",
+					"version": "~master"
 				},
 				"deslog": "~>0.2.0"
 			},
-		    "sourcePaths" : ["swift/source"],
-		    "importPaths" : ["swift/source"]
+			"sourcePaths" : ["swift/source"],
+			"importPaths" : ["swift/source"]
 		},
 		{
-		    "name" : "rebel",
-		    "targetType" : "library",
-		    "dependencies" : {
+			"name" : "rebel",
+			"targetName" : "rebel",
+			"targetType" : "library",
+			"dependencies" : {
 				"rebel:swift" : "~master",
 
 				"derelict-sdl2": ">=1.9.5",
-				"derelict-gl3": ">=1.0.13"
-		    },
-		    "sourcePaths" : ["rebel/source"],
-		    "importPaths" : ["rebel/source"]
-		},    
+				"derelict-gl3": ">=1.0.13",
+				"derelict-assimp3": "~>1.0.1"
+			},
+			"sourcePaths" : ["rebel/source"],
+			"importPaths" : ["rebel/source"]
+		},
 		{
-		    "name" : "testgame",
-		    "targetType" : "executable",
-		    "dependencies" : {
+			"name" : "testgame",
+			"targetName" : "TestGame",
+			"targetType" : "executable",
+				"dependencies" : {
 				"rebel:swift" : "~master",
 				"rebel:rebel" : "~master"
-		    },
-		    "sourcePaths" : ["testgame/source"],
-		    "importPaths" : ["testgame/source"]
-		},    
+			},
+			"sourcePaths" : ["testgame/source"],
+			"importPaths" : ["testgame/source"]
+		},
 		{
-		    "name" : "town",
-		    "targetType" : "executable",
-		    "dependencies" : {
+			"name" : "town",
+			"targetName" : "Town",
+			"targetType" : "executable",
+			"dependencies" : {
 				"rebel:swift" : "~master",
 				"rebel:rebel" : "~master"
-		    },
-		    "sourcePaths" : ["town/source"],
-		    "importPaths" : ["town/source"]
+			},
+			"sourcePaths" : ["town/source"],
+			"importPaths" : ["town/source"]
 		}
 	]
 }
-	

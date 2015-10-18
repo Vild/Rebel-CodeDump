@@ -3,7 +3,7 @@
 import rebel.opengl.mesh;
 
 import derelict.opengl3.gl3;
-import gl3n.linalg;
+import swift.data.vector;
 import rebel.opengl.cubemaptexture;
 
 class Skybox : Mesh {

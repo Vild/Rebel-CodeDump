@@ -11,7 +11,7 @@ string CToString(const char * str) {
 	return str[0 .. strlen(str)].dup;
 }
 
-IT GetTypeArray(T, IT)(T[] arr) {
+IT GetTypeArray(IT, T)(T[] arr) {
 	foreach(T item; arr) {
 		if (cast(IT)item)
 			return cast(IT)item;

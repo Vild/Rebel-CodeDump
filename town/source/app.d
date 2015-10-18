@@ -3,8 +3,6 @@ module testgame.app;
 import building;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
-import gl3n.linalg;
-import gl3n.math;
 import rebel.camera.freecamera;
 import rebel.data.sdleventprovider;
 import rebel.entity.colorcube;
@@ -18,6 +16,8 @@ import rebel.opengl.cubemaptexture;
 import rebel.opengl.mesh;
 import rebel.opengl.shader;
 import rebel.opengl.texture;
+import rebel.ray.ray;
+import rebel.ray.raybox;
 import rebel.rebelengine;
 import skybox;
 import std.algorithm : max,min;
@@ -28,12 +28,16 @@ import std.stdio;
 import swift.data.convar;
 import swift.data.deltaprovider;
 import swift.data.vector;
+import swift.data.vector;
 import swift.engine : Engine;
 import swift.enginestate;
 import swift.event.deltaevent;
 import swift.event.event;
-import rebel.ray.raybox;
-import rebel.ray.ray;
+import swift.entity.world;
+import swift.entity.entity;
+import swift.entity.system.movement;
+import swift.entity.component.position;
+import swift.entity.component.velocity;
 
 RebelEngine engine;
 
@@ -51,8 +55,7 @@ int main(string[] args) {
 		engine.MainLoop;
 	} catch (Exception e) {
 		import std.stdio;
-		writeln();
-		writeln(e.msg);
+		writeln(e.toString);
 	}
 	return 0;
 }
@@ -63,7 +66,15 @@ public:
 		glGenQueries(1, &query);
 		glPointSize(6);
 		glLineWidth(6);
-		
+
+		world = new World();
+		world.setSystem(new Movement());
+
+		ent = world.createEntity;
+		ent.addComponent(new Position(vec3(0, 0, 0)));
+		ent.addComponent(new Velocity(vec3(1, 0, 0.5)));
+		ent.addToWorld();
+
 		cam = new FreeCamera();
 		cam.Speed = MOVE_SPEED;
 		cam.Position = vec3(0, 4, 2);
@@ -160,15 +171,19 @@ public:
 		if (_(KeyCode.KEY_SPACE))
 			cam.Lift(delta);
 
-		//cam.Walk(delta/8.);
-		//cam.Strafe(delta/8.);
+		cam.Walk(delta/8.);
+		cam.Strafe(delta/8.);
 
-		//rX += delta*8.;
+		rX += delta*8.;
 	
 		rX = rX % 360;
 		rY = max(min(rY, 90), -90);
 		
 		cam.Rotate(rX, rY, 0);
+
+		world.setDelta(delta);
+		world.process();
+		engine.Logger.Info("%s: Pos: %s, Vel: %s", ent.toString, ent.getComponent!Position().toString, ent.getComponent!Velocity().toString);
 
 		vec3 t = cam.Translation();
 		
@@ -208,6 +223,9 @@ private:
 	float rX = 0, rY = 0, fov = 45;
 	const double MOVE_SPEED = 10;
 	vec2i mousePos;
+
+	World world;
+	Entity ent;
 
 	FreeCamera cam;
 

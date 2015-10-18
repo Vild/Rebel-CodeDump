@@ -1,14 +1,13 @@
 ﻿module swift.engine;
 
-import swift.event.event;
-import swift.log.log;
-import swift.data.dataprovider;
-import swift.enginestate;
-
 import core.thread : Thread;
 import core.time : dur;
 
 import swift.data.convar;
+import swift.data.dataprovider;
+import swift.enginestate;
+import swift.event.event;
+import swift.log.log;
 
 class Engine {
 public:
@@ -36,7 +35,7 @@ public:
 		int i = 0;
 		state.Start(this);
 		while (!quit) {
-			foreach(DataProvider dp; dataProviders)
+			foreach (DataProvider dp; dataProviders)
 				dp.Update(this);
 			beforeTick();
 			state.Tick(this, eventQueue);

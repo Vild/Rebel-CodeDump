@@ -4,7 +4,7 @@ import rebel.opengl.mesh;
 
 import derelict.opengl3.gl3;
 import rebel.opengl.texture;
-import gl3n.linalg;
+import swift.data.vector;
 import rebel.ray.raybox;
 
 class Building : Mesh {
